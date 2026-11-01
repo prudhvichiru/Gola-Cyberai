@@ -27,9 +27,11 @@ app.use(cors({
     if (!IS_PROD) {
       allowed.push('http://localhost:3000', 'http://127.0.0.1:3000', 'http://[::1]:3000');
     }
-    if (allowed.includes(origin) || (!IS_PROD && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin))) {
-      return callback(null, true);
-    }
+    const isAllowed =
+      allowed.includes(origin) ||
+      /^https:\/\/[\w-]+(\.vercel\.app)$/.test(origin) ||
+      (!IS_PROD && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin));
+    if (isAllowed) return callback(null, true);
     return callback(new Error(`Not allowed by CORS: ${origin}`));
   },
   credentials: true,
