@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # GOLA CYBERAI — BACKEND API & WEBSOCKET GATEWAY
+  # ==========================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: gola-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - FRONTEND_URL=http://localhost:3000
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - gola-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1024M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  # ==========================================
+  # GOLA CYBERAI — FRONTEND WEB APPLICATION
+  # ==========================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: gola-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - NEXT_PUBLIC_API_URL=http://localhost:5000/api
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - gola-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 1536M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+networks:
+  gola-network:
+    driver: bridge

@@ -1,0 +1,16 @@
+{
+  "name": "gola-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n \"backend,frontend\" -c \"blue,magenta\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npx --prefix frontend next dev frontend",
+    "build:backend": "npm --prefix backend run build",
+    "build:frontend": "npm --prefix frontend run build",
+    "typecheck:frontend": "npm --prefix frontend run typecheck"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
