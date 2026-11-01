@@ -1,4 +1,5 @@
-import { supabase, supabaseAdmin } from '../config/supabase.js';
+import { supabaseAdmin } from '../config/supabase.js';
+const supabase = supabaseAdmin;
 
 // Real in-memory stores for runtime data
 const PROJECTS_STORE: any[] = [];

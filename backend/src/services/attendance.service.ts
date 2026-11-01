@@ -1,4 +1,4 @@
-import { supabase } from '../config/supabase.js';
+import { supabaseAdmin as supabase } from '../config/supabase.js';
 
 // Fallback in-memory store in case Supabase table has not been migrated yet
 interface FallbackBreak {

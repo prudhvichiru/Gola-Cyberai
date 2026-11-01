@@ -1,4 +1,5 @@
-import { supabase, supabaseAdmin } from '../config/supabase.js';
+import { supabaseAdmin } from '../config/supabase.js';
+const supabase = supabaseAdmin;
 import { EmailService } from './email.service.js';
 
 // Legitimate company organizational structure lookup
