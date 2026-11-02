@@ -1,13 +1,22 @@
 'use client';
 
 import * as React from 'react';
-import { ActiveTimerWidget, TimesheetGrid } from '@/features/time-tracking';
+import dynamic from 'next/dynamic';
+
+const ActiveTimerWidget = dynamic(
+  () => import('@/features/time-tracking/components/active-timer-widget').then((m) => m.ActiveTimerWidget),
+  { ssr: false, loading: () => <div className="h-32 rounded-2xl bg-muted animate-pulse" /> }
+);
+
+const TimesheetGrid = dynamic(
+  () => import('@/features/time-tracking/components/timesheet-grid').then((m) => m.TimesheetGrid),
+  { ssr: false, loading: () => <div className="h-64 rounded-2xl bg-muted animate-pulse" /> }
+);
 
 export default function TimeTrackingPage() {
   const [refreshKey, setRefreshKey] = React.useState(0);
 
   const handleTimerStopped = () => {
-    // Refresh timesheet entries automatically when a timer is stopped
     setRefreshKey((prev) => prev + 1);
   };
 
@@ -22,10 +31,8 @@ export default function TimeTrackingPage() {
         </p>
       </div>
 
-      {/* Live Server Timer Widget */}
       <ActiveTimerWidget onTimerStopped={handleTimerStopped} />
 
-      {/* Weekly Timesheet & Manager Approvals */}
       <div className="pt-2">
         <TimesheetGrid key={refreshKey} />
       </div>
