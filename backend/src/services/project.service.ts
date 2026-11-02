@@ -353,7 +353,7 @@ export class ProjectService {
       .eq('status', 'submitted')
       .order('created_at', { ascending: true });
     if (error) throw new Error(error.message);
-    return { data: data || [] };
+    return data || [];
   }
 
   static async reviewTimesheet(timesheetId: string, reviewerId: string, status: 'approved' | 'rejected', reason?: string) {

@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Play, Pause, Square, Clock, AlertTriangle, CheckCircle2, ChevronDown } from 'lucide-react';
 import { ProjectFrontendService } from '@/services/project.service';
+import { createClient } from '@/lib/supabase-client';
 import { TaskTimer, TaskItem } from '@/types/project.types';
 import { Button } from '@/components/ui/button';
 
@@ -21,8 +22,12 @@ export function ActiveTimerWidget({ onTimerStopped }: ActiveTimerWidgetProps) {
 
   // Sync active timer from server
   const syncTimer = React.useCallback(async () => {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    const userId = user?.id || 'current-user';
+
     const [timerRes, tasksRes] = await Promise.all([
-      ProjectFrontendService.getActiveTimer(),
+      ProjectFrontendService.getActiveTimer(userId),
       ProjectFrontendService.getTasks({ status: 'in_progress' }),
     ]);
 

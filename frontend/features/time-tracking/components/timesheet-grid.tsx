@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { ProjectFrontendService } from '@/services/project.service';
 import { TimesheetRecord, TimesheetEntry } from '@/types/project.types';
+import { createClient } from '@/lib/supabase-client';
 import { StatCard } from '@/components/shared/stat-card';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { EmptyState } from '@/components/shared/empty-state';
@@ -41,13 +42,17 @@ export function TimesheetGrid() {
 
   const fetchTimesheets = React.useCallback(async () => {
     setLoading(true);
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    const userId = user?.id || 'current-user';
+
     const [myRes, queueRes] = await Promise.all([
-      ProjectFrontendService.getMyTimesheets(),
+      ProjectFrontendService.getMyTimesheets(userId),
       ProjectFrontendService.getTimesheetApprovalQueue(),
     ]);
 
-    if (myRes.data) setTimesheets(myRes.data);
-    if (queueRes.data) setApprovalQueue(queueRes.data);
+    if (Array.isArray(myRes.data)) setTimesheets(myRes.data);
+    if (Array.isArray(queueRes.data)) setApprovalQueue(queueRes.data);
     setLoading(false);
   }, []);
 
